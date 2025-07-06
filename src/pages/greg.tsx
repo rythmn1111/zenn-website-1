@@ -292,7 +292,7 @@ they become compute nodes, earning through HyperBEAM by offering up spare cycles
 
 <br />
 <p className="mb-2 flex items-center gap-2 text-xl font-semibold">~ use any language you want</p>
-<p className="mb-2 flex items-center gap-2 text-xl font-semibold">since this is a full computing module, there’s no restriction. build in Python, Node, Rust, Lua, C — whatever you're comfortable with.</p>
+<p className="mb-2 flex items-center gap-2 text-xl font-semibold">since this is a full computing module, there&apos;s no restriction. build in Python, Node, Rust, Lua, C — whatever you&apos;re comfortable with.</p>
 <br />
 <p className="mb-2 flex items-center gap-2 text-xl font-semibold">~ infinite possibilities</p>
 <p className="mb-2 flex items-center gap-2 text-xl font-semibold">attach a SIM module and go fully wireless. add a screen, buttons, camera, GPS — the hardware possibilities are endless.</p>
