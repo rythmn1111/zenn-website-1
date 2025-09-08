@@ -162,12 +162,12 @@ export default function V2() {
     <div className={manrope.className + " min-h-screen bg-white flex flex-col items-center pt-8"}>
       {/* Logo */}
       <div className="mb-8">
-        <Image src="/logo.png" alt="farza" width={48} height={48} />
+        <Image src="./logo.png" alt="farza" width={48} height={48} />
       </div>
       
       {/* Audio Player */}
       <div className="w-full max-w-2xl px-4 flex justify-center mb-8">
-        <CustomAudioPlayer src="/audio.mp3" />
+        <CustomAudioPlayer src="./audio.mp3" />
       </div>
       
       {/* Content */}
@@ -207,7 +207,7 @@ export default function V2() {
             <li>express constantly polls, then publishes that data to the mqtt topic</li>
           </ul>
           <br />
-          <Image src="/aura.jpg" alt="aura" width={1000} height={1000} />
+          <Image src="./aura.jpg" alt="aura" width={1000} height={1000} />
           <br /><p className="mb-2">it works. <br />but it&apos;s clunky...</p>
 
           <br /><p className="mb-2">what&apos;s broken?</p>
@@ -219,7 +219,7 @@ export default function V2() {
           <br />
           <p className="mb-2 flex items-center gap-2"><Sparkles size={20} color="#6b7280" strokeWidth={2} /> 2. the future <Sparkles size={20} color="#6b7280" strokeWidth={2} /></p>
           <br /><p className="mb-2 flex items-center gap-2">imagine this :</p>
-          <br /><Image src="/rpi.png" alt="aot" width={1000} height={1000} />
+          <br /><Image src="./rpi.png" alt="aot" width={1000} height={1000} />
           
           <br /><p className="mb-2 flex items-center gap-2">a hardware device that runs a custom OS, purpose-built for AO.  
 out of the box, you can plug in any sensor, temperature, mic, GPS, anything, and it&apos;s instantly AO-compatible. no bridges, no glue code, no weird setups.
@@ -233,7 +233,7 @@ they become compute nodes, earning through HyperBEAM by offering up spare cycles
 <br />
 
 <p>hats <Sparkles size={20} color="#6b7280" strokeWidth={2} /> </p>
-        <br /><Image src="/hats.jpg" alt="hats" width={1000} height={1000} />
+        <br /><Image src="./hats.jpg" alt="hats" width={1000} height={1000} />
 <br /> <p className="mb-2 flex items-center gap-2 normal-case">just like the raspberry pi changed the DIY world with its ecosystem of modular accessories — called &quot;hats&quot; — we imagine something similar for this AO-powered platform.
 </p> 
 <br /> <p className="mb-2 flex items-center gap-2 normal-case">for those unfamiliar, a &quot;hat&quot; is a small hardware module that plugs into the GPIO pins of a raspberry pi. people have built hats for everything: weather stations, motor drivers, audio synths, thermal cameras — each one unlocking new functionality with zero need for rewiring the core board.
@@ -265,11 +265,11 @@ they become compute nodes, earning through HyperBEAM by offering up spare cycles
 <p className="mb-2 flex items-center gap-2 pl-4 text-xl font-semibold">
   • <span className="font-medium">raspberry pi zero 2 W</span>
 </p>
-<Image src="/pi-zero.jpg" alt="Raspberry Pi Zero 2 W" width={500} height={1000} />
+<Image src="./pi-zero.jpg" alt="Raspberry Pi Zero 2 W" width={500} height={1000} />
 <p className="mb-2 flex items-center gap-2 pl-4 text-xl font-semibold">
   • <span className="font-medium">raspberry pi compute module 5</span>
 </p>
-<Image src="/compute-module.jpeg" alt="Raspberry Pi Compute Module 5" width={500} height={1000} />
+<Image src="./compute-module.jpeg" alt="Raspberry Pi Compute Module 5" width={500} height={1000} />
 
 
 
