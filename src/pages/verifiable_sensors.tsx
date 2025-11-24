@@ -162,6 +162,9 @@ function CustomAudioPlayer({ src }: { src: string }) {
 }
 
 export default function VerifiableSensors() {
+  const [isSealModalOpen, setIsSealModalOpen] = useState(false);
+  const [isAnchorModalOpen, setIsAnchorModalOpen] = useState(false);
+
   return (
     <>
       <Head>
@@ -344,6 +347,43 @@ export default function VerifiableSensors() {
         <section id="core-architecture" className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">II. Core Architecture for Verifiable Anchoring</h2>
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+            <div className="my-8 flex justify-center">
+              <Image 
+                src="./anchor.svg" 
+                alt="Anchor" 
+                width={900} 
+                height={900} 
+                className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity" 
+                onClick={() => setIsAnchorModalOpen(true)}
+              />
+            </div>
+
+            {/* Full Screen Modal for Anchor */}
+            {isAnchorModalOpen && (
+              <div 
+                className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+                onClick={() => setIsAnchorModalOpen(false)}
+              >
+                <div className="relative max-w-full max-h-full">
+                  <button
+                    onClick={() => setIsAnchorModalOpen(false)}
+                    className="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300 z-10"
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+                  <Image 
+                    src="./anchor.svg" 
+                    alt="Anchor - Full Screen" 
+                    width={1200} 
+                    height={1200} 
+                    className="rounded-lg"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+            )}
+            
             <p className="mb-4 text-lg">
               To understand the core architecture, we must anchor ourselves to a single defining question: what does it truly mean for a sensor to be verifiable? In our framework, &quot;verifiable&quot; is captured entirely by one foundational assurance:
             </p>
@@ -1985,6 +2025,8 @@ const checks = {
               <li>Together, they create a verifiable sensor architecture that neither the owner nor the manufacturer can manipulate once activated.</li>
             </ul>
 
+            <hr className="my-12 border-t-2 border-gray-300" />
+
             <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.B. The Sealing Model (High Level)
             </h4>
@@ -2039,6 +2081,8 @@ const checks = {
             <p className="mb-4 text-lg">
               The sealing model ensures that, after activation, the device cannot deviate from the cryptographically verifiable path defined by the Attestation Engine and the trusted execution pipeline. This converts the Raspberry Pi into a deterministic, tamper evident sensor that derives its trust from remote TEE backed challenge issuance, a sealed local environment, and an irreversible hardware identity anchored on chain.
             </p>
+
+            <hr className="my-12 border-t-2 border-gray-300" />
 
             <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.C. Sealing Through a Modified Pi OS
@@ -2169,9 +2213,48 @@ const checks = {
               These properties allow a Raspberry Pi, which does not contain a hardware TEE, to behave like a locked verification appliance. The remote HyperBEAM TEE nodes guarantee challenge and timestamp correctness, and the sealed Pi OS guarantees that local execution and sensor handling cannot be altered by the device owner.
             </p>
 
+            <hr className="my-12 border-t-2 border-gray-300" />
+
             <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.D. Post Sealing Operation and the Sandbox Execution Environment
             </h4>
+            
+            <div className="my-8 flex justify-center">
+              <Image 
+                src="./seal.svg" 
+                alt="Seal" 
+                width={900} 
+                height={900} 
+                className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity" 
+                onClick={() => setIsSealModalOpen(true)}
+              />
+            </div>
+
+            {/* Full Screen Modal */}
+            {isSealModalOpen && (
+              <div 
+                className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+                onClick={() => setIsSealModalOpen(false)}
+              >
+                <div className="relative max-w-full max-h-full">
+                  <button
+                    onClick={() => setIsSealModalOpen(false)}
+                    className="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300 z-10"
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+                  <Image 
+                    src="./seal.svg" 
+                    alt="Seal - Full Screen" 
+                    width={1200} 
+                    height={1200} 
+                    className="rounded-lg"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+            )}
             
             <p className="mb-4 text-lg">
               Once the device completes its sealing process, the Raspberry Pi stops behaving like a normal computer and becomes a locked verification appliance. Only a small set of controlled, verifiable functions remain available. Everything else is permanently removed.
@@ -2399,6 +2482,8 @@ const checks = {
             <p className="mb-4 text-lg">
               A Raspberry Pi, even without an onboard TEE, becomes a fully verifiable sensor device because all trust is enforced by sealing locally and by HyperBEAM&apos;s TEE based challenge issuance remotely.
             </p>
+
+            <hr className="my-12 border-t-2 border-gray-300" />
 
             <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.E. Why User Reflashing Does Not Break Security
