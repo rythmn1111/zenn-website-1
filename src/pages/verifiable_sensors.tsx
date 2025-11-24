@@ -164,6 +164,7 @@ function CustomAudioPlayer({ src }: { src: string }) {
 export default function VerifiableSensors() {
   const [isSealModalOpen, setIsSealModalOpen] = useState(false);
   const [isAnchorModalOpen, setIsAnchorModalOpen] = useState(false);
+  const [isFinalAnchorModalOpen, setIsFinalAnchorModalOpen] = useState(false);
 
   return (
     <>
@@ -2583,6 +2584,471 @@ const checks = {
             <p className="mb-4 text-lg font-semibold">
               Nothing from the old identity survives.
             </p>
+          </div>
+        </section>
+
+        {/* Section IV */}
+        <section id="putting-it-together" className="mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">IV. Putting It All Together: End To End Verifiable Sensing</h2>
+          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+            <p className="mb-4 text-lg">
+              By this point in the paper we have introduced many moving pieces:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>secure element based device identity</li>
+              <li>code hashing and the Trusted Sensor Execution Library (TSEL)</li>
+              <li>raw sensor commitments and origin_hash</li>
+              <li>HyperBEAM based freshness challenges</li>
+              <li>on chain anchoring through Arweave</li>
+              <li>a sealed Pi OS and sandboxed runtime</li>
+              <li>a HyperBEAM Attestation Engine that coordinates everything</li>
+            </ul>
+            <p className="mb-4 text-lg">
+              This section ties all of these elements into a single, unified story.
+            </p>
+            <p className="mb-4 text-lg font-semibold">
+              The goal is simple.
+            </p>
+            <p className="mb-4 text-lg">
+              We want to show, step by step, how a single sensor reading or image moves from the physical world into a final attestation packet that anyone can verify, and how the four cryptographic anchors plus sealing make it impossible to fake without detection.
+            </p>
+
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+              IV.A. The Four Cryptographic Anchors of Trust
+            </h3>
+            <p className="mb-4 text-lg">
+              At the heart of this architecture are four cryptographic anchors that defend each part of the statement:
+            </p>
+            <div className="bg-gray-50 border-l-4 border-gray-400 pl-6 py-4 mb-6">
+              <p className="text-lg font-semibold text-gray-800 italic">
+                &quot;I am confident this result really came from this exact device, running this exact code, at this exact moment, and was not fabricated, manipulated, or replayed.&quot;
+              </p>
+            </div>
+            <p className="mb-4 text-lg">
+              We can map each phrase to a concrete anchor.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              &quot;This exact device&quot; → Device Identity Anchor
+            </h4>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>ATECC608A secure element generates <strong>PRIV_DEV</strong> and <strong>PUB_DEV</strong>.</li>
+              <li>Only this physical chip can sign with <strong>PRIV_DEV</strong>.</li>
+              <li>The device identity {'{'}<strong>PUB_DEV</strong>, metadata, owner_wallet{'}'} is registered permanently on Arweave via HyperBEAM.</li>
+              <li>Any valid attestation must verify against this key.</li>
+            </ul>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              &quot;This exact code&quot; → Execution Integrity Anchor
+            </h4>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>The program logic is hashed:
+                <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mt-2 mb-2 ml-6">
+                  <code>{`code_hash = SHA256(user_program)`}</code>
+                </pre>
+              </li>
+              <li>The code runs only inside TSEL, not directly against sensors.</li>
+              <li>The HyperBEAM Attestation Engine accepts code, uploads it to Arweave, recomputes code_hash, and sends it back with a challenge.</li>
+              <li>The final attestation includes code_hash inside the signed structure.</li>
+              <li>If a single line changes, the hash changes, and verification fails.</li>
+            </ul>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              &quot;This result truly came from the real sensor&quot; → Origin Anchor
+            </h4>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>When the sensor fires, TSEL captures raw sensor bytes and computes:
+                <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mt-2 mb-2 ml-6">
+                  <code>{`raw_hash = H(raw_sensor_bytes)`}</code>
+                </pre>
+              </li>
+              <li>The processed output (e.g. JPEG, speed value, reading) is hashed:
+                <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mt-2 mb-2 ml-6">
+                  <code>{`data_hash = H(processed_output)`}</code>
+                </pre>
+              </li>
+              <li>The two are bound together:
+                <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mt-2 mb-2 ml-6">
+                  <code>{`origin_hash = H(raw_hash || data_hash)`}</code>
+                </pre>
+              </li>
+              <li>Only real sensor activation can produce the correct raw bytes.</li>
+              <li>Any attempt to modify RAW or processed output changes the hashes and invalidates the attestation.</li>
+            </ul>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              &quot;At this exact moment, not replayed&quot; → Freshness Anchor
+            </h4>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>The Pi requests a challenge from the HyperBEAM Attestation Engine, sending {'{'}<strong>wallet_address</strong>, <strong>code_hash</strong>{'}'}.</li>
+              <li>AE running inside a TEE generates a random challenge <strong>C</strong>, records {'{'}<strong>wallet</strong>, <strong>code_hash</strong>, <strong>C</strong>, <strong>T</strong>{'}'} on chain with a Merkle proof, and returns {'{'}<strong>C</strong>, <strong>T</strong>, <strong>SIG_TEE</strong>, <strong>hashpath</strong>{'}'}.</li>
+              <li>TSEL binds challenge = <strong>C</strong> into the signed attestation:
+                <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mt-2 mb-2 ml-6">
+                  <code>{`SIGN(PRIV_DEV, raw_hash + data_hash + code_hash + C + timestamp_device)`}</code>
+                </pre>
+              </li>
+              <li>Later, a verifier checks that this <strong>C</strong> really existed at time <strong>T</strong> in AE state, that it was bound to this <strong>code_hash</strong>, and that the device timestamp came after <strong>T</strong>.</li>
+              <li>Replaying old data with a fresh challenge becomes impossible.</li>
+            </ul>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Finally, all of this is recorded on Arweave through HyperBEAM.
+            </h4>
+            <p className="mb-4 text-lg">
+              We can think of a fifth, global anchor:
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Immutable Public Anchoring Anchor
+            </h4>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>AE logs device registration, code approvals, challenge issuance, and final attestations on Arweave.</li>
+              <li>Merkle based HashPaths allow verifiers to prove inclusion without downloading the entire history.</li>
+              <li>No central party can rewrite or erase this history.</li>
+            </ul>
+            <p className="mb-4 text-lg">
+              Together:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li><strong>Device Identity Anchor</strong></li>
+              <li><strong>Execution Integrity Anchor</strong></li>
+              <li><strong>Origin Anchor</strong></li>
+              <li><strong>Freshness Anchor</strong></li>
+              <li><strong>Public Anchoring Anchor</strong></li>
+            </ul>
+            <p className="mb-4 text-lg font-semibold">
+              form a single, tightly bound chain of trust.
+            </p>
+
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+              IV.B. The Sealed Lifecycle of a Verifiable Sensor
+            </h3>
+            <p className="mb-4 text-lg">
+              These anchors only work if the device itself cannot cheat. This is why the sealing model and sandbox exist.
+            </p>
+            <p className="mb-4 text-lg">
+              The lifecycle looks like this.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Stage 1: Development Mode
+            </h4>
+            <p className="mb-4 text-lg">
+              Developer has full control over the Pi.
+            </p>
+            <p className="mb-4 text-lg">
+              They write sensor code, experiment, log RAW, and tune TSEL usage.
+            </p>
+            <p className="mb-4 text-lg">
+              The secure element generates:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`PRIV_DEV   (kept inside ATECC608A)
+PUB_DEV    (exported)`}</code>
+            </pre>
+            <p className="mb-4 text-lg">
+              The device registers with HyperBEAM AE as a development device:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`{
+  pubkey: PUB_DEV,
+  owner_wallet,
+  dev_mode: true
+}`}</code>
+            </pre>
+            <p className="mb-4 text-lg">
+              This stage is flexible and unsafe by design. Nothing is sealed yet.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Stage 2: Sealing
+            </h4>
+            <p className="mb-4 text-lg">
+              When the developer is ready to turn the Pi into a production sensor:
+            </p>
+            <p className="mb-4 text-lg">
+              The custom Pi OS performs first boot sealing.
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>Root filesystem becomes read only.</li>
+              <li>SSH and root password are destroyed.</li>
+              <li>Bootloader is locked.</li>
+              <li>Only the sandbox and TSEL retain access to the secure element.</li>
+            </ul>
+            <p className="mb-4 text-lg">
+              The device registers its sealed state:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`{
+  PUB_DEV,
+  wallet_address,
+  sealed: true,
+  seal_timestamp
+}`}</code>
+            </pre>
+            <p className="mb-4 text-lg">
+              After this point:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>No code changes without AE involvement.</li>
+              <li>No OS changes without reflashing.</li>
+              <li>Any reflashing wipes the sealed identity, and AE treats the board as a new device.</li>
+            </ul>
+            <p className="mb-4 text-lg font-semibold">
+              Sealing is what protects the system from the owner.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Stage 3: Post Seal Operation
+            </h4>
+            <p className="mb-4 text-lg">
+              The device boots, starts a Wi Fi access point, and exposes a minimal configuration UI.
+            </p>
+            <p className="mb-4 text-lg">
+              The owner can configure network settings and select predefined tasks or pipelines.
+            </p>
+            <p className="mb-4 text-lg">
+              They cannot obtain shell access, install packages, or modify the OS.
+            </p>
+            <p className="mb-4 text-lg">
+              All meaningful logic runs through the sandbox and TSEL, under AE control.
+            </p>
+            <p className="mb-4 text-lg font-semibold">
+              The Pi is now a verification appliance, not a general computer.
+            </p>
+
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+              IV.C. End To End Flow of a Single Measurement
+            </h3>
+            <p className="mb-4 text-lg">
+              Let us now follow a single measurement from start to finish and see all anchors in action.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Step 1: Code Approval and Challenge Issuance
+            </h4>
+            <p className="mb-4 text-lg">
+              Developer or owner submits code to HyperBEAM AE:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`{
+  code,
+  wallet_address
+}`}</code>
+            </pre>
+            <p className="mb-4 text-lg">
+              AE:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>uploads code to Arweave</li>
+              <li>computes <strong>code_hash = SHA256(code)</strong></li>
+              <li>generates challenge <strong>C</strong> inside a TEE</li>
+              <li>logs {'{'}<strong>wallet</strong>, <strong>code_hash</strong>, <strong>C</strong>, <strong>T</strong>{'}'} on chain with Merkle proof</li>
+              <li>responds to the device with:
+                <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mt-2 mb-2 ml-6">
+                  <code>{`{
+  code,
+  code_hash,
+  challenge_C: C
+}`}</code>
+                </pre>
+              </li>
+            </ul>
+            <p className="mb-4 text-lg">
+              Sandbox on the Pi accepts this package only if:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>AE signature is valid</li>
+              <li>code_hash matches the payload</li>
+              <li>the device identity is sealed and recognized</li>
+            </ul>
+            <p className="mb-4 text-lg font-semibold">
+              At this point, the Execution Integrity Anchor is set. The device has exactly one code version approved for use.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Step 2: Running the Code Inside the Sandbox
+            </h4>
+            <p className="mb-4 text-lg">
+              Sandbox passes code into TSEL.
+            </p>
+            <p className="mb-4 text-lg">
+              The program interacts with TSEL to read sensors and call <strong>TSEL_result(...)</strong> or the batched equivalent.
+            </p>
+            <p className="mb-4 text-lg">
+              TSEL, not user code, touches the hardware interfaces.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Step 3: Capturing Origin
+            </h4>
+            <p className="mb-4 text-lg">
+              At the moment of capture:
+            </p>
+            <p className="mb-4 text-lg">
+              TSEL reads raw bytes from the sensor hardware:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>camera RAW</li>
+              <li>IMU sample burst</li>
+              <li>temperature register values</li>
+              <li>microphone PCM window</li>
+            </ul>
+            <p className="mb-4 text-lg">
+              TSEL computes:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`raw_hash  = H(raw_sensor_bytes)
+data_hash = H(processed_output)
+origin_hash = H(raw_hash || data_hash)`}</code>
+            </pre>
+            <p className="mb-4 text-lg font-semibold">
+              origin_hash now ties the processed output to the physical event.
+            </p>
+            <p className="mb-4 text-lg font-semibold">
+              Here the Origin Anchor is established.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Step 4: Binding Freshness
+            </h4>
+            <p className="mb-4 text-lg">
+              TSEL binds the HyperBEAM challenge <strong>C</strong> and the device timestamp:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`signed_payload = raw_hash
+               || data_hash
+               || code_hash
+               || C
+               || timestamp_device`}</code>
+            </pre>
+            <p className="mb-4 text-lg">
+              This ensures that:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>the reading is tied to a specific AE issued challenge</li>
+              <li>the reading must have occurred after the challenge time</li>
+            </ul>
+            <p className="mb-4 text-lg font-semibold">
+              This is the Freshness Anchor in action.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Step 5: Secure Element Signing
+            </h4>
+            <p className="mb-4 text-lg">
+              The signed payload is sent to the ATECC608A secure element.
+            </p>
+            <p className="mb-4 text-lg">
+              The SE computes:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`SIG_DEV = SIGN(PRIV_DEV, signed_payload)`}</code>
+            </pre>
+            <p className="mb-4 text-lg">
+              The secure element never reveals <strong>PRIV_DEV</strong>.
+            </p>
+            <p className="mb-4 text-lg">
+              Only this physical chip can produce <strong>SIG_DEV</strong>.
+            </p>
+            <p className="mb-4 text-lg font-semibold">
+              This step binds the measurement to the Device Identity Anchor.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Step 6: Returning the Attestation Packet
+            </h4>
+            <p className="mb-4 text-lg">
+              The device outputs an attestation packet:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`{
+  device_pubkey: PUB_DEV,
+  code_hash,
+  raw_hash,
+  data_hash,
+  origin_hash,
+  challenge: C,
+  timestamp_device,
+  signature: SIG_DEV
+}`}</code>
+            </pre>
+            <p className="mb-4 text-lg">
+              This is sent back to the HyperBEAM Attestation Engine for anchoring.
+            </p>
+
+            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+              Step 7: AE Anchoring and Public Record
+            </h4>
+            <p className="mb-4 text-lg">
+              The AE performs:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-6 ml-4 text-lg">
+              <li>verify <strong>SIG_DEV</strong> with <strong>PUB_DEV</strong></li>
+              <li>check <strong>PUB_DEV</strong> against sealed device registry</li>
+              <li>confirm <strong>code_hash</strong> matches previous approval</li>
+              <li>confirm <strong>C</strong> exists and matches log record</li>
+              <li>confirm temporal ordering is valid</li>
+            </ul>
+            <p className="mb-4 text-lg">
+              Then AE writes the attestation to Arweave, including:
+            </p>
+            <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6">
+              <code>{`{
+  device_pubkey: PUB_DEV,
+  code_hash,
+  origin_hash,
+  challenge: C,
+  timestamp_device,
+  ae_timestamp: T,
+  hashpath,
+  signature_dev: SIG_DEV,
+  signature_tee: SIG_TEE
+}`}</code>
+            </pre>
+            <p className="mb-4 text-lg font-semibold">
+              At this point the Public Anchoring Anchor is satisfied.
+            </p>
+            <p className="mb-4 text-lg font-semibold">
+              The entire event is now globally verifiable.
+            </p>
+
+            <div className="my-12 flex justify-center">
+              <Image 
+                src="./final_anchor.svg" 
+                alt="Final Anchor" 
+                width={900} 
+                height={900} 
+                className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity" 
+                onClick={() => setIsFinalAnchorModalOpen(true)}
+              />
+            </div>
+
+            {/* Full Screen Modal for Final Anchor */}
+            {isFinalAnchorModalOpen && (
+              <div 
+                className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+                onClick={() => setIsFinalAnchorModalOpen(false)}
+              >
+                <div className="relative max-w-full max-h-full">
+                  <button
+                    onClick={() => setIsFinalAnchorModalOpen(false)}
+                    className="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300 z-10"
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+                  <Image 
+                    src="./final_anchor.svg" 
+                    alt="Final Anchor - Full Screen" 
+                    width={1200} 
+                    height={1200} 
+                    className="rounded-lg"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </section>
       </div>
