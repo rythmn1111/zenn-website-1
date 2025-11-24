@@ -1,8 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Zenn Website
+
+A Next.js website featuring a white paper on **TRUE Verifiable Sensors** - an end-to-end attestation framework for establishing Proof of Origin for sensor and camera outputs on resource-constrained devices.
+
+## Features
+
+- **White Paper Presentation**: Professional white paper layout for technical documentation
+- **Interactive Flowcharts**: React Flow diagrams illustrating Proof of Device Identity and Proof of Execution flows
+- **Custom Audio Player**: Built-in audio player with playback controls
+- **Responsive Design**: Modern, clean UI built with Tailwind CSS
+- **TypeScript**: Full type safety throughout the application
+
+## Tech Stack
+
+- **Framework**: Next.js 15.3.5
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **Icons**: Lucide React
+- **Flowcharts**: React Flow
+- **Fonts**: Manrope (via Google Fonts)
+- **Analytics**: Vercel Analytics
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ (or Bun)
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+### Development
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -14,27 +54,104 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Available Pages
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- `/` - Home page
+- `/verifiable_sensors` - TRUE Verifiable Sensors white paper
+- `/v2` - Version 2 page
+- `/v2-docs` - Version 2 documentation
+- `/greg` - Greg page
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── src/
+│   ├── pages/              # Next.js pages
+│   │   ├── verifiable_sensors.tsx  # Main white paper page
+│   │   ├── v2.tsx
+│   │   └── ...
+│   ├── components/         # React components
+│   │   ├── ProofOfExecutionFlow.tsx
+│   │   └── ProofOfDeviceIdentityFlow.tsx
+│   └── ...
+├── public/                 # Static assets
+│   ├── audio2.mp3
+│   ├── logo.png
+│   └── ...
+└── package.json
+```
 
-## Learn More
+## Building for Production
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+This will:
+1. Build the Next.js application
+2. Export static files for deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+The project is configured for deployment on Vercel. Simply push to your GitHub repository and connect it to Vercel for automatic deployments.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Build Configuration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+The project uses `next export` to generate static files, making it compatible with static hosting platforms.
+
+## Key Components
+
+### Verifiable Sensors White Paper
+
+The main white paper (`/verifiable_sensors`) covers:
+
+- **Section I**: Introduction and Threat Model
+- **Section II.A**: Proof of Device Identity
+  - Secure Element Chips
+  - Device Keypair Generation
+  - Public Key Registration
+- **Section II.B**: Proof of Execution
+  - Code Hashing
+  - Trusted Sensor Execution Library (TSEL)
+  - Batch Processing
+- **Section II.C**: Proof of Freshness
+  - Freshness Challenge Mechanism
+
+### Interactive Flowcharts
+
+The white paper includes two interactive React Flow diagrams:
+
+1. **Proof of Device Identity Flow**: Shows the device provisioning and identity verification process
+2. **Proof of Execution Flow**: Illustrates the code execution and attestation pipeline
+
+## Scripts
+
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build and export for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+## Dependencies
+
+### Core
+- `next` - React framework
+- `react` & `react-dom` - UI library
+- `typescript` - Type safety
+
+### UI & Styling
+- `tailwindcss` - Utility-first CSS framework
+- `lucide-react` - Icon library
+
+### Features
+- `reactflow` - Interactive flowcharts
+- `@vercel/analytics` - Analytics integration
+
+## License
+
+This project is private.
+
+## Contributing
+
+This is a private project. For questions or issues, please contact the repository owner.
