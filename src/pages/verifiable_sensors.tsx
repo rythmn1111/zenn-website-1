@@ -6,6 +6,7 @@ import ProofOfExecutionFlow from "@/components/ProofOfExecutionFlow";
 import ProofOfDeviceIdentityFlow from "@/components/ProofOfDeviceIdentityFlow";
 import ProofOfFreshnessFlow from "@/components/ProofOfFreshnessFlow";
 import ProofOfFreshnessConceptualFlow from "@/components/ProofOfFreshnessConceptualFlow";
+import TableOfContents from "@/components/TableOfContents";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -173,6 +174,12 @@ export default function VerifiableSensors() {
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B4513'/></svg>" />
       </Head>
       <div className={manrope.className + " min-h-screen bg-white"}>
+      <style jsx global>{`
+        html {
+          scroll-behavior: smooth;
+        }
+      `}</style>
+      <TableOfContents />
       <div className="max-w-4xl mx-auto px-8 py-16">
         {/* Logo */}
         <div className="mb-8 flex justify-center">
@@ -197,7 +204,7 @@ export default function VerifiableSensors() {
         </div>
 
         {/* Abstract */}
-        <section className="mb-12">
+        <section id="abstract" className="mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Abstract</h2>
           <div className="bg-gray-50 border-l-4 border-gray-400 pl-6 py-4 mb-6">
             <p className="text-gray-700 leading-relaxed text-lg mb-4">
@@ -219,7 +226,7 @@ export default function VerifiableSensors() {
         </section>
 
         {/* Terminologies */}
-        <section className="mb-12">
+        <section id="terminologies" className="mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Terminologies to Know Before Starting the Paper</h2>
           
           <div className="space-y-6">
@@ -400,7 +407,7 @@ export default function VerifiableSensors() {
               With this in mind, we now begin by examining the first requirement.
             </p>
 
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+            <h3 id="proof-of-identity" className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
               II.A. How Do I Know This Result Came From This Exact Device?
             </h3>
             <p className="text-lg text-gray-600 mb-4 italic">(Establishing Proof of Identity)</p>
@@ -629,7 +636,7 @@ PUB_DEV   (exported)`}
 
             <hr className="my-12 border-t-2 border-gray-300" />
 
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+            <h3 id="proof-of-execution" className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
               II.B. How Do I Know It Was Produced by This Exact Code?
             </h3>
             <p className="text-lg text-gray-600 mb-4 italic">(Establishing Proof of Execution)</p>
@@ -1113,7 +1120,7 @@ while True:
 
             <hr className="my-12 border-t-2 border-gray-300" />
 
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+            <h3 id="proof-of-freshness" className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
               II.C. How Do I Know It Was Captured at This Exact Moment?
             </h3>
             <p className="text-lg text-gray-600 mb-4 italic">(Establishing Proof of Freshness)</p>
@@ -1715,7 +1722,7 @@ const checks = {
 
             <hr className="my-12 border-t-2 border-gray-300" />
 
-            <h3 className="text-2xl font-semibold text-gray-800 mb-8 mt-8">
+            <h3 id="proof-of-origin" className="text-2xl font-semibold text-gray-800 mb-8 mt-8">
               II.D. How Do I Know That This Output Originated From the Real Sensor, Capturing a Real Moment, Instead of Being Fabricated or Replayed?
             </h3>
             
@@ -1917,7 +1924,7 @@ const checks = {
               We introduce a <strong>sealing stage</strong> and a <strong>sandboxed execution environment</strong> that together transform a Raspberry Pi into a cryptographically verifiable sensor. Sealing ensures that once a device enters its production state, neither the owner nor the manufacturer can alter its software environment without detection. The sandbox ensures that once sealed, the device can only execute code that has been cryptographically validated and distributed by the Attestation Engine (AE). Combined, these mechanisms elevate our system from a set of cryptographic proofs to a full, tamper evident hardware pipeline, one where users cannot cheat, modify, or influence attestation results after the system enters its final, trusted state.
             </p>
 
-            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+            <h4 id="protecting-from-owner" className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.A. Why We Must Protect the Device Even From Its Owner
             </h4>
             
@@ -2028,7 +2035,7 @@ const checks = {
 
             <hr className="my-12 border-t-2 border-gray-300" />
 
-            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+            <h4 id="sealing-model" className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.B. The Sealing Model (High Level)
             </h4>
             
@@ -2085,7 +2092,7 @@ const checks = {
 
             <hr className="my-12 border-t-2 border-gray-300" />
 
-            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+            <h4 id="modified-pi-os" className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.C. Sealing Through a Modified Pi OS
             </h4>
             
@@ -2216,7 +2223,7 @@ const checks = {
 
             <hr className="my-12 border-t-2 border-gray-300" />
 
-            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+            <h4 id="sandbox-environment" className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.D. Post Sealing Operation and the Sandbox Execution Environment
             </h4>
             
@@ -2486,7 +2493,7 @@ const checks = {
 
             <hr className="my-12 border-t-2 border-gray-300" />
 
-            <h4 className="text-xl font-semibold text-gray-800 mb-4 mt-8">
+            <h4 id="reflashing-security" className="text-xl font-semibold text-gray-800 mb-4 mt-8">
               III.E. Why User Reflashing Does Not Break Security
             </h4>
             
@@ -2613,7 +2620,7 @@ const checks = {
               We want to show, step by step, how a single sensor reading or image moves from the physical world into a final attestation packet that anyone can verify, and how the four cryptographic anchors plus sealing make it impossible to fake without detection.
             </p>
 
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+            <h3 id="four-anchors" className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
               IV.A. The Four Cryptographic Anchors of Trust
             </h3>
             <p className="mb-4 text-lg">
@@ -2720,7 +2727,7 @@ const checks = {
               form a single, tightly bound chain of trust.
             </p>
 
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+            <h3 id="sealed-lifecycle" className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
               IV.B. The Sealed Lifecycle of a Verifiable Sensor
             </h3>
             <p className="mb-4 text-lg">
@@ -2817,7 +2824,7 @@ PUB_DEV    (exported)`}</code>
               The Pi is now a verification appliance, not a general computer.
             </p>
 
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+            <h3 id="end-to-end-flow" className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
               IV.C. End To End Flow of a Single Measurement
             </h3>
             <p className="mb-4 text-lg">
