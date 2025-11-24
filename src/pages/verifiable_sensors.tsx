@@ -1081,12 +1081,22 @@ while True:
             </div>
             
             <p className="mb-4 text-lg">
-              This is the <strong>freshness problem</strong> — proving that the measurement or image was produced after a specific moment in public history, and not pre-computed or reused from the past.
+              This is the <strong>freshness problem</strong> - proving that the measurement or image was produced after a specific moment in public history, and not pre-computed or reused from the past.
             </p>
             
             <p className="mb-4 text-lg">
               Our architecture solves this using a mechanism called the <b>freshness challenge</b> and highly relies on <strong>HyperBEAM TEE (Trusted Execution Environment)</strong>.
             </p>
+            
+            <p className="mb-4 text-lg">
+              We implement a dedicated <strong>attestation engine</strong> built on <strong>HyperBEAM</strong>, which serves multiple roles within our system, some of which were introduced earlier (such as device registration), and others that will be explored in later sections. In this section, we focus specifically on its function as a <strong>decentralized TEE-backed freshness oracle</strong>. Our <strong>HyperBEAM based Attestation Engine</strong> issues an <strong>unpredictable challenge nonce</strong> that devices must embed into their signed attestation packages. By binding each reading to this challenge, sensors can cryptographically prove that the reported result was generated after the challenge was issued, ensuring it cannot be replayed, reused, or fabricated from prior data.
+            </p>
+            
+            <div className="bg-gray-50 border-l-4 border-gray-400 pl-6 py-4 mb-6">
+              <p className="text-lg text-gray-800 italic">
+                &quot;<strong>HyperBEAM&apos;s TEE-backed architecture</strong> makes it an ideal source for issuing freshness challenges. Because the challenge nonce is generated inside a <strong>decentralized Trusted Execution Environment</strong>, we can cryptographically verify when the challenge was produced, that it was produced in response to our request, and that it could not have been predicted or precomputed. This <strong>verifiable, timing anchored generation</strong> is what uniquely distinguishes HyperBEAM as a <strong>trusted oracle for freshness</strong>.&quot;
+              </p>
+            </div>
           </div>
         </section>
       </div>
