@@ -3051,6 +3051,22 @@ origin_hash = H(raw_hash || data_hash)`}</code>
             )}
           </div>
         </section>
+
+        {/* Footer */}
+        <footer className="mt-16 pt-8 border-t-2 border-gray-300 text-center">
+          
+          <p className="text-base text-gray-600 mb-2">
+            Want to critic? Or see any mistake? Write here:
+          </p>
+          <a 
+            href="https://github.com/rythmn1111/zenn-website-1/blob/master/src/pages/verifiable_sensors.tsx" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline text-base"
+          >
+            GitHub
+          </a>
+        </footer>
       </div>
     </div>
     </>
