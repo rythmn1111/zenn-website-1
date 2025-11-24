@@ -1064,6 +1064,29 @@ while True:
               <li>simple to reason about</li>
               <li>and fully aligned with the <strong>Proof of Execution</strong> model.</li>
             </ul>
+
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4 mt-8">
+              II.C. How Do I Know It Was Captured at This Exact Moment?
+            </h3>
+            <p className="text-lg text-gray-600 mb-4 italic">(Establishing Proof of Freshness)</p>
+            
+            <p className="mb-4 text-lg">
+              Even if we know which device produced the data (Section II.A) and which code produced the data (Section II.B), there is still a critical question:
+            </p>
+            
+            <div className="bg-gray-50 border-l-4 border-gray-400 pl-6 py-4 mb-6">
+              <p className="text-lg font-semibold text-gray-800 italic">
+                &quot;How do I know this sensor reading wasn&apos;t captured earlier and replayed now?&quot;
+              </p>
+            </div>
+            
+            <p className="mb-4 text-lg">
+              This is the <strong>freshness problem</strong> — proving that the measurement or image was produced after a specific moment in public history, and not pre-computed or reused from the past.
+            </p>
+            
+            <p className="mb-4 text-lg">
+              Our architecture solves this using a mechanism called the <b>freshness challenge</b> and highly relies on <strong>HyperBEAM TEE (Trusted Execution Environment)</strong>.
+            </p>
           </div>
         </section>
       </div>
