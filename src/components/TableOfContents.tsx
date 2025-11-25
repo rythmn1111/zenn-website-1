@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface TOCItem {
   id: string;
@@ -32,6 +33,26 @@ const tableOfContentsData: TOCItem[] = [
 
 export default function TableOfContents() {
   const [activeId, setActiveId] = useState<string>("");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // Set initial state based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      // Open by default on tablet/desktop (md and above), closed on mobile
+      if (window.innerWidth >= 768) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -71,32 +92,52 @@ export default function TableOfContents() {
   };
 
   return (
-    <nav className="fixed left-8 top-32 w-64 hidden xl:block">
-      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm max-h-[calc(100vh-10rem)] overflow-y-auto">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">
-          Table of Contents
-        </h3>
-        <ul className="space-y-1">
-          {tableOfContentsData.map((item) => (
-            <li key={item.id}>
-              <button
-                onClick={() => scrollToSection(item.id)}
-                className={`
-                  w-full text-left py-1.5 px-2 rounded transition-colors text-sm
-                  ${item.level === 2 ? "pl-4" : ""}
-                  ${
-                    activeId === item.id
-                      ? "bg-gray-900 text-white font-medium"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                  }
-                `}
-              >
-                {item.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
+    <>
+      {/* Toggle Button - Always visible */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed left-4 top-24 z-50 bg-white border border-gray-200 rounded-lg p-2 shadow-md hover:shadow-lg transition-all"
+        aria-label={isOpen ? "Close table of contents" : "Open table of contents"}
+      >
+        {isOpen ? (
+          <ChevronLeft className="w-5 h-5 text-gray-700" />
+        ) : (
+          <ChevronRight className="w-5 h-5 text-gray-700" />
+        )}
+      </button>
+
+      {/* Table of Contents Panel */}
+      <nav
+        className={`fixed left-4 top-40 w-64 z-40 transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-[280px]"
+        }`}
+      >
+        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-lg max-h-[calc(100vh-12rem)] overflow-y-auto">
+          <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">
+            Table of Contents
+          </h3>
+          <ul className="space-y-1">
+            {tableOfContentsData.map((item) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => scrollToSection(item.id)}
+                  className={`
+                    w-full text-left py-1.5 px-2 rounded transition-colors text-sm
+                    ${item.level === 2 ? "pl-4" : ""}
+                    ${
+                      activeId === item.id
+                        ? "bg-gray-900 text-white font-medium"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    }
+                  `}
+                >
+                  {item.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+    </>
   );
 }
