@@ -180,7 +180,7 @@ export default function VerifiableSensors() {
         }
       `}</style>
       <TableOfContents />
-      <div className="max-w-4xl mx-auto px-8 py-16 xl:ml-80">
+      <div className="max-w-4xl mx-auto px-8 py-16">
         {/* Logo */}
         <div className="mb-8 flex justify-center">
           <Image src="./logo.png" alt="Logo" width={48} height={48} />
