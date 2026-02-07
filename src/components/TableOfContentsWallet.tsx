@@ -101,12 +101,32 @@ export default function TableOfContentsWallet() {
     }
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const handleSectionClick = (id: string) => {
+    scrollToSection(id);
+    if (isMobile) {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <>
-      {/* Toggle Button - Always visible */}
+      {/* Toggle Button — bottom-right FAB on mobile, top-left on desktop */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed left-4 top-24 z-50 bg-[#0f1b33] border border-blue-400/30 rounded-lg p-2 hover:border-cyan-400/50 transition-all"
+        className={`fixed z-50 bg-[#0f1b33] border border-blue-400/30 rounded-lg p-2.5 md:p-2 hover:border-cyan-400/50 transition-all ${
+          isMobile
+            ? "bottom-6 right-4 shadow-lg shadow-black/40"
+            : "left-4 top-24"
+        }`}
         aria-label={isOpen ? "Close table of contents" : "Open table of contents"}
       >
         {isOpen ? (
@@ -116,21 +136,46 @@ export default function TableOfContentsWallet() {
         )}
       </button>
 
+      {/* Backdrop overlay — mobile only */}
+      {isOpen && isMobile && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {/* Table of Contents Panel */}
       <nav
-        className={`fixed left-4 top-40 w-64 z-40 transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-[280px]"
+        className={`fixed z-40 transition-transform duration-300 ease-in-out ${
+          isMobile
+            ? `bottom-0 left-0 right-0 ${isOpen ? "translate-y-0" : "translate-y-full"}`
+            : `left-4 top-40 w-64 ${isOpen ? "translate-x-0" : "-translate-x-[280px]"}`
         }`}
       >
-        <div className="bg-[#0f1b33] border border-blue-400/30 rounded-lg p-4 max-h-[calc(100vh-12rem)] overflow-y-auto">
-          <h3 className="text-sm font-bold text-blue-200 mb-4 uppercase tracking-wide">
-            Table of Contents
-          </h3>
+        <div className={`bg-[#0f1b33] border border-blue-400/30 p-4 overflow-y-auto ${
+          isMobile
+            ? "rounded-t-xl max-h-[70vh] border-b-0"
+            : "rounded-lg max-h-[calc(100vh-12rem)]"
+        }`}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-blue-200 uppercase tracking-wide">
+              Table of Contents
+            </h3>
+            {isMobile && (
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-blue-400/60 hover:text-blue-200 text-lg leading-none"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+            )}
+          </div>
           <ul className="space-y-1">
             {tableOfContentsData.map((item) => (
               <li key={item.id}>
                 <button
-                  onClick={() => scrollToSection(item.id)}
+                  onClick={() => handleSectionClick(item.id)}
                   className={`
                     w-full text-left py-1.5 px-2 rounded transition-colors text-sm
                     ${item.level === 2 ? "pl-4" : ""}

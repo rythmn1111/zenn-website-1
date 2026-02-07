@@ -463,35 +463,46 @@ function TitleBlock() {
 export default function BlueprintMarkings() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Corner brackets */}
+      {/* Corner brackets — always visible */}
       <CornerBracket corner="tl" />
       <CornerBracket corner="tr" />
       <CornerBracket corner="bl" />
       <CornerBracket corner="br" />
 
-      {/* Crosshair marks */}
+      {/* Crosshair marks — all screens */}
       <CrosshairMark x="50%" y="24px" />
       <CrosshairMark x="50%" y="calc(100% - 24px)" />
       <CrosshairMark x="24px" y="50%" />
       <CrosshairMark x="calc(100% - 24px)" y="50%" />
 
-      {/* Arc mark — upper right area */}
-      <ArcMark x="calc(100% - 100px)" y="180px" />
+      {/* Compass rose — all screens, repositioned on mobile */}
+      {/* Mobile: top-right, small */}
+      <div className="block md:hidden opacity-70">
+        <CompassRose x="calc(100% - 50px)" y="60px" />
+      </div>
+      {/* Desktop: lower left */}
+      <div className="hidden md:block">
+        <CompassRose x="80px" y="calc(100% - 120px)" />
+      </div>
 
-      {/* Compass rose — lower left */}
-      <CompassRose x="80px" y="calc(100% - 120px)" />
+      {/* Arc mark — tablet+ */}
+      <div className="hidden md:block">
+        <ArcMark x="calc(100% - 100px)" y="180px" />
+      </div>
 
-      {/* Scale bar — bottom center */}
+      {/* Scale bar — all screens */}
       <ScaleBar x="50%" y="calc(100% - 40px)" />
 
-      {/* Dimension line — top area */}
+      {/* Dimension line — all screens */}
       <DimensionLine x="calc(50% - 60px)" y="60px" width={120} label="SEC. A" />
 
-      {/* Hardware wallet schematic — right side */}
-      <WalletSchematic />
-
-      {/* Title block — bottom right */}
+      {/* Title block — all screens */}
       <TitleBlock />
+
+      {/* Hardware wallet schematic — desktop only (too large for mobile) */}
+      <div className="hidden lg:block">
+        <WalletSchematic />
+      </div>
     </div>
   );
 }
